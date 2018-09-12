@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse
 from django.core.urlresolvers import reverse
-from common.models import Types
+from common.models import Types,Goods
 
 def index(request):
     '''
@@ -85,6 +85,10 @@ def delete(request,tid):
             context = {"info":"该类别下含有子类别,不能删除"}
             return render(request,'console/info.html',context)
         else:
+            goods = Goods.objects.filter(typeid=tid).count()
+            if goods > 0:
+                context = {"info": "该类别下含有商品,不能删除"}
+                return render(request, 'console/info.html', context)
             type = Types.objects.get(id=tid)
             if type:
                 type.delete()

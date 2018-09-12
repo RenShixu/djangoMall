@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from common.models import Users
+from common.utils import encryptionUtil
+
 # Create your views here.
 def index(request):
     return render(request,"console/index.html")
@@ -32,11 +34,8 @@ def dologin(request):
     #判断账户密码是否正确
     try:
         user = Users.objects.get(username=request.POST["username"])
-        if user and user.state == 0:
-            import hashlib
-            m = hashlib.md5()
-            m.update(bytes(request.POST["password"], encoding='utf8'))
-            if user.password != m.hexdigest():
+        if user:
+            if user.password != encryptionUtil.getencodepassword(request.POST["password"]):
                 context = {"info":"用户名或密码不正确"}
                 return render(request,'console/login.html',context)
             else:

@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
+from common.utils import encryptionUtil
 
 
 def userindex(request):
@@ -28,16 +29,13 @@ def userinsert(request):
         user.code = request.POST["code"]
         user.address = request.POST["address"]
         user.state = 1
-
-        import hashlib
-        m = hashlib.md5()
-        m.update(bytes(request.POST["password"],encoding='utf8'))
-        user.password = m.hexdigest()
-
+        user.password = encryptionUtil.getencodepassword(request.POST["password"])
         user.save()
+        context = {"info":"添加用户信息成功"}
     except Exception as err:
+        context = {"info": "添加用户信息失败"}
         print(err)
-    return redirect(reverse('console_user_query'))
+    return render(request, "console/users/edit.html", context)
 
 def useredit(request,uid):
     user = Users.objects.get(id=uid)
@@ -57,17 +55,21 @@ def userupdate(request,uid):
         user.state = request.POST["state"]
 
         user.save()
+        context = {"info": "用户信息更新成功"}
     except Exception as err:
+        context = {"info": "用户信息更新失败"}
         print(err)
-    return redirect(reverse('console_user_index'))
+    return render(request, 'console/info.html', context)
 
 def userdel(request,uid):
     try:
         user = Users.objects.get(id=uid)
         user.delete()
+        context = {"info": "删除成功"}
     except Exception as err:
+        context = {"info": "删除失败"}
         print(err)
-    return redirect(reverse('console_user_index'))
+    return render(request,'console/info.html',context)
 
 def query(request,pagenum,pagesize,keyword):
     '''
@@ -101,3 +103,37 @@ def query(request,pagenum,pagesize,keyword):
                "pagenum":str(pagenum),"keyword":ky,"maxpagenum":str(maxpagenum),
                "nextpage":str(nextpage),"prepage":str(prepage)}
     return render(request,"console/users/index.html",context)
+
+def resetpassword(request,uid):
+    '''
+    重置密码页面
+    :param request:
+    :param uid:
+    :return:
+    '''
+    context = {"uid":uid}
+    return render(request,'console/users/resetcode.html',context)
+
+def modifypassword(request):
+    '''
+    修改密码
+    :param request:
+    :return:
+    '''
+    password = request.POST["password"]
+    repassword = request.POST["repassword"]
+    if password != repassword:
+        context = {"info":"两次输入的密码不一致"}
+        return render(request,'console/info.html',context)
+
+    try:
+        user = Users.objects.get(id=request.POST["uid"])
+        encodepassword = encryptionUtil.getencodepassword(password)
+
+        if encodepassword != user.password:
+            user.password = encodepassword
+            user.save()
+    except Exception as err:
+        print(err)
+    context = {"info":"密码修改成功"}
+    return render(request,"console/info.html",context)

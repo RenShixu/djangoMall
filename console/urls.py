@@ -28,6 +28,9 @@ urlpatterns = [
     url(r'^update/(?P<uid>[0-9]+)', users.userupdate,name="console_user_update"),
     url(r'^del/(?P<uid>[0-9]+)$', users.userdel,name="console_user_del"),
     url(r'^query/(?P<pagenum>[0-9]+)/(?P<pagesize>[0-9]+)/(?P<keyword>\s*|.*)$', users.query,name="console_user_query"),
+    url(r'^password/(?P<uid>[0-9]+)', users.resetpassword,name="console_user_password"),
+    url(r'^restpw$', users.modifypassword,name="console_user_modifypw"),
+
 
     #后台登录
     url(r'^login$', index.login, name="console_login_index"),

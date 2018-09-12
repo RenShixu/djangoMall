@@ -35,8 +35,13 @@
                     <td>{{ user.addtime }}</td>
                     <td>{% if user.state == 0 %}管理员{% elif user.state == 1 %}会员{% elif user.state == 2 %}禁用{% endif %}</td>
                     <td>
-                        <a href="{% url 'console_user_edit' user.id %}">编辑</a>
-                        <a href="{% url 'console_user_del' user.id %}">删除</a>
+                        {% if request.session.consoleuser.state == 0 %}
+                            <a href="{% url 'console_user_edit' user.id %}">编辑</a>
+                            <a href="{% url 'console_user_del' user.id %}">删除</a>
+                            <a href="{% url 'console_user_password' user.id %}">重置密码</a>
+                        {% elif request.session.consoleuser.state != 0 and request.session.consoleuser.id == user.id %}
+                            <a href="{% url 'console_user_edit' user.id %}">编辑</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
