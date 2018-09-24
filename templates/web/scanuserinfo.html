@@ -1,0 +1,58 @@
+{% extends "web/base.html" %}
+
+{% block mainbody %}
+    <form id="edit-profile" action="{% url 'userinfoedit' user.id%}" class="form-horizontal" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>会员信息查看</legend>
+            <div class="control-group">
+                <label class="control-label" for="input01">账号：</label>
+                <div class="controls">
+                    {{ user.username }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="input01">真实姓名：</label>
+                <div class="controls">
+                    <input type="text" name="name" class="input-xlarge" id="input01" value="{{ user.name }}" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="input01">性别：</label>
+                <div class="controls">
+                    <input type="radio" name="sex" class="input-xlarge" id="input01" value="1" 
+                    {% if user.sex == 1 %}checked{% endif %} /> 男
+                    <input type="radio" name="sex" class="input-xlarge" id="input01" value="0"
+                    {% if user.sex == 0 %}checked{% endif %} /> 女
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="input01">地址：</label>
+                <div class="controls">
+                    <input type="text" name="address" class="input-xlarge" id="input01" value="{{ user.address }}" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="input01">邮编：</label>
+                <div class="controls">
+                    <input type="text" name="code" class="input-xlarge" id="input01" value="{{ user.code }}" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="input01">电话：</label>
+                <div class="controls">
+                    <input type="text" name="phone" class="input-xlarge" id="input01" value="{{ user.phone }}" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="input01">email邮箱：</label>
+                <div class="controls">
+                    <input type="text" name="email" class="input-xlarge" id="input01" value="{{ user.email }}" />
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">保存</button> <a type="button" href="{% url 'reset' user.id%}">重置密码</a>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}

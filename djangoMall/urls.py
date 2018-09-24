@@ -17,5 +17,5 @@ from django.conf.urls import url,include
 
 urlpatterns = [
     url(r'^console/', include('console.urls')),
-    url(r'^/', include('web.urls')),
+    url(r'^', include('web.urls')),
 ]

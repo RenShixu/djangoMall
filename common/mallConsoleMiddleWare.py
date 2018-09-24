@@ -17,6 +17,12 @@ class MallConsoleMiddleWare(object):
             if "consoleuser" not in request.session:
                 # 3.重定向
                 return redirect(reverse("console_login_index"))
+                # 网站前台会员登录判断
+        if re.match("^/orders", path) or re.match("^/vip", path):
+            # 判断当前会员是否没有登录
+            if "vipuser" not in request.session:
+                # 执行登录界面跳转
+                return redirect(reverse('login'))
         #通过
         response = self.get_response(request)
         return response

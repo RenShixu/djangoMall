@@ -9,9 +9,40 @@ from django.db.models import Q
 from common.utils import encryptionUtil
 
 
-def userindex(request):
-    users = Users.objects.all()
-    context = {"users":users}
+def userindex(request,pagenum,pagesize):
+    '''
+    用户信息浏览查询首页
+    :param request:
+    :return:
+    '''
+    pagenum = int(pagenum)
+    pagesize = int(pagesize)
+    # 条件返回
+    conditions = []
+    keyword = request.GET.get("keyword",None)
+    sex = request.GET.get("sex",None)
+    if keyword:
+        users = Users.objects.filter(Q(username__icontains=keyword) | Q(name__icontains=keyword))
+        conditions.append("keyword=" + keyword)
+    else:
+        users = Users.objects.filter()
+    if sex:
+        users = users.filter(sex=sex)
+        conditions.append("sex=" + sex)
+    #分页数据
+    userlist = Paginator(users,pagesize)
+    #页数范围
+    pagerange = userlist.page_range
+    #最大页数
+    maxpage = max(pagerange)
+    if pagenum < 1:
+        pagenum = 1
+    if pagenum > maxpage:
+        pagenum = maxpage
+    # 当前页数据
+    currentpage = userlist.page(pagenum)
+
+    context = {"users":currentpage,"pagerange":pagerange,"pagenum":int(pagenum),"conditions":conditions}
     return render(request,'console/users/index.html',context)
 
 def useradd(request):

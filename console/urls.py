@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^$', index.index,name="console_index"),
 
     #会员管理
-    url(r'^users$', users.userindex,name="console_user_index"),
+    url(r'^users/(?P<pagenum>[0-9]+)/(?P<pagesize>[0-9]+)', users.userindex,name="console_user_index"),
     url(r'^add$', users.useradd,name="console_user_add"),
     url(r'^insert$', users.userinsert,name="console_user_insert"),
     url(r'^edit/(?P<uid>[0-9]+)$', users.useredit,name="console_user_edit"),
